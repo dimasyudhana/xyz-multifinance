@@ -16,7 +16,6 @@ import (
 	_transactionFactory "github.com/dimasyudhana/xyz-multifinance/features/transactions/factory"
 	_transactionAPI "github.com/dimasyudhana/xyz-multifinance/features/transactions/handler"
 
-	"github.com/dimasyudhana/xyz-multifinance/app/middlewares"
 	"github.com/labstack/echo/v4"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
@@ -42,8 +41,8 @@ func InitRouter(db *sql.DB, e *echo.Echo) {
 	})
 	e.GET("/metrics", echo.WrapHandler(promhttp.Handler()))
 
+	e.POST("/registrasi", sysRoute.authHandler.Register())
 	e.POST("/login", sysRoute.authHandler.Login())
-	e.POST("/registrasi", sysRoute.customerHandler.Insert(), middlewares.JWTMiddleware())
 
 	e.GET("/products", sysRoute.productHandler.Get())
 	e.GET("/products/:product_id", sysRoute.productHandler.GetById())

@@ -1,4 +1,4 @@
-APP_PATH: ".env"
+APP_PATH: ""
 JWT_KEY: Secret@123
 AESGCMSECRET: Secret@123
 HTTP_SERVER:
@@ -15,7 +15,7 @@ DATABASE:
   DBUSER: "root"
   DBPASS: "Secret123"
   DBHOST: "localhost"
-  DBPORT: 3307
+  DBPORT: 3308
   DBNAME: "xyz_multifinance"
 LOGGER:
   DEVELOPMENT: false

@@ -4,6 +4,7 @@ type TransactionCore struct {
 	TransactionId   string `json:"transaction_id"`
 	CustomerId      string `json:"customer_id"`
 	NomorKontrak    string `json:"nomor_kontrak"`
+	NamaAsset       string `json:"nama_asset"`
 	OTR             string `json:"otr"`
 	JumlahCicilan   string `json:"jumlah_cicilan"`
 	JumlahBunga     string `json:"jumlah_bunga"`

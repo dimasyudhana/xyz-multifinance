@@ -1,10 +1,7 @@
 package service
 
 import (
-	"errors"
-
 	"github.com/dimasyudhana/xyz-multifinance/features/customers"
-	"github.com/dimasyudhana/xyz-multifinance/utils/encrypt"
 	"github.com/go-playground/validator/v10"
 )
 
@@ -20,15 +17,19 @@ func New(customerData customers.Data) customers.Service {
 	}
 }
 
-func (cs *customerService) Insert(data *customers.CustomersCore) (*customers.CustomersCore, error) {
-	hash, err := encrypt.HashPassword(data.Password)
+func (c *customerService) CustomerTransactions(customerId string) (<-chan *customers.CustomersCore, error) {
+	rows, err := c.customerData.CustomerTransactions(customerId)
 	if err != nil {
-		return nil, errors.New(err.Error())
+		return nil, err
 	}
-	data.Password = hash
-	result, err := cs.customerData.Insert(data)
-	if err != nil {
-		return nil, errors.New(err.Error())
-	}
+
+	result := make(chan *customers.CustomersCore)
+	go func() {
+		for _, data := range rows {
+			result <- data
+		}
+		close(result)
+	}()
+
 	return result, nil
 }

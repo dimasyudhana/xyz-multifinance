@@ -1,4 +1,4 @@
-APP_PATH: "/app/.env"
+APP_PATH: ".env"
 JWT_KEY: Secret@123
 AESGCMSECRET: Secret@123
 HTTP_SERVER:

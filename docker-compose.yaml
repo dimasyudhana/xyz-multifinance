@@ -1,0 +1,102 @@
+version: "3.8"
+
+services:
+  nginx:
+    container_name: nginx_xyz_multifinance
+    ports:
+      - 443:443
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    volumes:
+      - ./nginx/nginx-selfsigned.crt:/etc/nginx/certs/nginx-selfsigned.crt
+      - ./nginx/nginx-selfsigned.key:/etc/nginx/certs/nginx-selfsigned.key
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    networks:
+      - xyz-multifinance
+
+  mysql:
+    image: mysql:latest
+    container_name: mysql_xyz_multifinance
+    ports:
+      - "3308:3306"
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=Secret123
+      - MYSQL_DATABASE=xyz_multifinance
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - xyz-multifinance
+
+  prometheus:
+    container_name: prometheus_container
+    restart: always
+    image: prom/prometheus
+    volumes:
+      - prometheus_config:/etc/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention=20d'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+    ports:
+      - '9090:9090'
+    networks:
+      - xyz-multifinance
+
+  node_exporter:
+    container_name: node_exporter_container
+    restart: always
+    image: prom/node-exporter
+    ports:
+      - '9100:9100'
+    networks:
+      - xyz-multifinance
+
+  grafana:
+    container_name: grafana_container
+    restart: always
+    image: grafana/grafana
+    ports:
+      - '3000:3000'
+    networks:
+      - xyz-multifinance
+
+  jaeger:
+    container_name: jaeger_container
+    restart: always
+    image: jaegertracing/all-in-one:1.21
+    environment:
+      - COLLECTOR_ZIPKIN_HTTP_PORT=9411
+    ports:
+      - 5775:5775/udp
+      - 6831:6831/udp
+      - 6832:6832/udp
+      - 5778:5778
+      - 16686:16686
+      - 14268:14268
+      - 14250:14250
+      - 9411:9411
+    networks:
+      - xyz-multifinance
+  
+  be:
+    image: backend-service
+    volumes:
+      - ./ssl:/ssl/
+    ports:
+      - 5000:5000
+    networks:
+      - xyz-multifinance
+
+networks:
+  xyz-multifinance:
+    name: xyz-multifinance
+
+volumes:
+  mysql_data:
+    driver: local
+  prometheus_config:
+    driver: local

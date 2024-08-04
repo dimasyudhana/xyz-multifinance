@@ -1,0 +1,33 @@
+APP_PATH: "/app/.env"
+JWT_KEY: Secret@123
+AESGCMSECRET: Secret@123
+HTTP_SERVER:
+  AppVersion: "1.0.0"
+  Port: ":5000"
+  PprofPort: ":8116"
+  Timeout: 15
+  ReadTimeout: 5
+  WriteTimeout: 5
+  CookieLifeTime: 44640
+  SessionCookieName: "session_token"
+  CSRFHeader: "X-CSRF-Token"
+DATABASE:
+  DBUSER: "root"
+  DBPASS: "Secret123"
+  DBHOST: "localhost"
+  DBPORT: 3307
+  DBNAME: "xyz_multifinance"
+LOGGER:
+  DEVELOPMENT: false
+  DISABLECALLER: true
+  DISABLESTACKTRACE: true
+  ENCODING: "json"
+  LEVEL: "info"
+JAEGER:
+  HOST: "localhost:6831"
+  SERVICENAME: "xyz_multifinance"
+  LOGSPANS: false
+METRICS:
+  Port: ":7080"
+  Url: 0.0.0.0:7080
+  ServiceName: xyz_multifinance

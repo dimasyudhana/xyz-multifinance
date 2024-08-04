@@ -1,0 +1,10 @@
+version: "3.8"
+
+services:
+  be:
+    image: backend-service
+    volumes:
+      - ./ssl:/ssl/
+    ports:
+      - 5000:5000
+    command: /bin/sh

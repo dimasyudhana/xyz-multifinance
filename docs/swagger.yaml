@@ -1,0 +1,954 @@
+openapi: 3.0.0
+info:
+  description: "XYZ-Multifinance adalah salah satu perusahaan pembiayaan di bidang White Goods, Motor, dan Mobil terbesar di Indonesia, yang mempunyai komitmen menyediakan solusi pembiayaan terhadap masyarakat melalui technology untuk meningkatkan kualitas \n hidup masyarakat umum. Disamping itu PT XYZ Multifinace juga mempunyai misi menciptakan nilai dan potensi pertumbuhan melalui technology.\n"
+  version: 1.0.0
+  title: XYZ-Multifinance Kredit Plus Restful-API
+  contact:
+    email: apiteam@swagger.io
+  license:
+    name: Apache 2.0
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+servers:
+- description: SwaggerHub API Auto Mocking
+  url: https://virtserver.swaggerhub.com/dimasyudhana/playground-pro/1.0.0
+- description: Production
+  url: https://peterzalai.biz.id
+tags:
+- name: Authentication
+  description: Identifikasi data customers
+- name: Customers
+  description: Pengguna aplikasi yang dibangun
+- name: Products
+  description: Product yang akan dibiayai
+- name: Transactions
+  description: Proses pembiayaan dan pembayaran setelah membuat pemesanan product oleh pembiaya
+
+paths:
+  /register:
+    post:
+      tags:
+      - Authentication
+      summary: Register customer
+      description: Endpoint create a new customer to the web-application
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/customers"
+            example:
+              email: "peterzalai@gmail.com"
+              password: "@Secret123"
+              fullname: "peterzalai"
+              legalname: "peterzalai"
+              nik: "5001251020050005"
+              pob: "Kota Bandung"
+              dob: "25/10/2005"
+              salary: "10.000.000"
+              ocr_picture: "ocr_picture.jpeg"
+              liveness_picture: "liveness_picture.jpeg"
+      responses:
+        '201':
+          $ref: '#/components/responses/Response201'
+        '400':
+          $ref: '#/components/responses/Response400'
+        '500':
+          $ref: '#/components/responses/Response500'
+
+  /login:
+    post:
+      tags:
+      - Authentication
+      summary: Login customer
+      description: Endpoint login customer to the web-application
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/customers'
+            examples:
+              example1:
+                summary: Example login customer id 1
+                value:
+                  email: "peterzalai@gmail.com"
+                  password: "@Secret123"
+              example2:
+                summary: Example login customer id 2
+                value:
+                  email: "peterzalai@gmail.com"
+                  password: "@Secret123"
+      responses:
+        '200':
+          $ref: '#/components/responses/Response200Login'
+        '400':
+          $ref: '#/components/responses/Response400Login'
+        '500':
+          $ref: '#/components/responses/Response500'
+
+  /customers:
+    get:
+      summary: Get customer profile
+      tags:
+      - Customers
+      security:
+      - bearerAuth: []
+      responses:
+        "200":
+          description: OK - Customer profile retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/customers"
+        '401':
+          $ref: '#/components/responses/Response401'
+        '400':
+          $ref: '#/components/responses/Response400'
+        '500':
+          $ref: '#/components/responses/Response500'
+
+  /customers/limits:
+    get:
+      tags:
+      - Customers
+      summary: Get customer limits
+      responses:
+        "200":
+          $ref: "#/components/responses/Response200customerReservation"
+        "404":
+          $ref: "#/components/responses/Response404"
+        "500":
+          $ref: "#/components/responses/Response500"
+      security:
+      - bearerAuth: []
+
+  /customers/transactions:
+    get:
+      tags:
+      - Customers
+      summary: Get customer that booking product, order by lastest update
+      responses:
+        "200":
+          $ref: "#/components/responses/Response200customerReservation"
+        "404":
+          $ref: "#/components/responses/Response404"
+        "500":
+          $ref: "#/components/responses/Response500"
+      security:
+      - bearerAuth: []
+
+  /products:
+    get:
+      tags:
+      - Products
+      summary: Find products
+      description: Find list product, product's average reviews and rating accumulation
+      parameters:
+      - in: query
+        name: category
+        schema:
+          type: string
+        description: String value of category to retrieve list of category products
+        required: false
+      - in: query
+        name: place
+        schema:
+          type: string
+        description: String value of place to retrieve list of place products
+        required: false
+      - in: query
+        name: rating
+        schema:
+          type: integer
+        description: String range value of rating to retrieve list of rating products
+        required: false
+      - in: query
+        name: price
+        schema:
+          type: integer
+        description: String range value of price to retrieve list of price products
+        required: false
+      - in: query
+        name: limit
+        schema:
+          type: integer
+        description: The limit number to retrieve
+        required: true
+      - in: query
+        name: offset
+        schema:
+          type: integer
+        description: The offset number to retrieve
+        required: false
+      - in: query
+        name: page
+        schema:
+          type: integer
+        description: The page number to retrieve
+        required: true
+      - in: query
+        name: sort
+        schema:
+          type: string
+        required: false
+      responses:
+        "200":
+          $ref: "#/components/responses/Response200Listproducts"
+        "400":
+          $ref: "#/components/responses/Response400"
+        "404":
+          $ref: "#/components/responses/Response404"
+        "500":
+          $ref: "#/components/responses/Response500"
+
+  /products/{product_id}:
+    get:
+      tags:
+      - Products
+      summary: Find specific product, product's reviews and rating
+      description: Select specific product, product's average reviews and rating accumulation
+      parameters:
+      - name: product_id
+        in: path
+        description: product ID
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          $ref: "#/components/responses/Response200Selectproducts"
+        "400":
+          $ref: "#/components/responses/Response400"
+        "404":
+          $ref: "#/components/responses/Response404"
+        "500":
+          $ref: "#/components/responses/Response500"
+
+  /products/{product_id}/availability:
+    get:
+      tags:
+      - Products
+      summary: Check availability
+      description: _
+      parameters:
+      - name: product_id
+        in: path
+        description: product ID
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "200":
+          $ref: "#/components/responses/Response200CheckAvailability"
+        "400":
+          $ref: "#/components/responses/Response400"
+        "404":
+          $ref: "#/components/responses/Response404"
+        "500":
+          $ref: "#/components/responses/Response500"
+      security:
+      - bearerAuth: []
+
+  /transactions:
+    post:
+      tags:
+      - Transactions
+      summary: customer can make a reservation
+      description: Endpoint login customer to the web-application
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/transactions"
+            example:
+              reservation:
+                product_id: "string-uuid"
+                check_in_date: "2023/06/05 08:05"
+                check_out_date: "2023/08/05 08:05"
+              payment:
+                payment_type: "bri/bca/bni/mandiri/permata/indomaret/alfamart/gopay/shopeepay/qris"
+      responses:
+        "201":
+          $ref: "#/components/responses/Response201MakeReservation"
+        "400":
+          $ref: "#/components/responses/Response400"
+        "500":
+          $ref: "#/components/responses/Response500"
+      security:
+      - bearerAuth: []
+
+  /transactions/status:
+    post:
+      tags:
+      - Transactions
+      summary: Retrive payment notification update
+      description: Retrive payment notification to update status on database
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/transactions"
+      responses:
+        "200":
+          $ref: "#/components/responses/Response200"
+        "400":
+          $ref: "#/components/responses/Response400"
+        "404":
+          $ref: "#/components/responses/Response404"
+        "500":
+          $ref: "#/components/responses/Response500"
+      security:
+      - bearerAuth: []
+
+  /transactions/{transaction_id}:
+    get:
+      tags:
+      - Transactions
+      summary: Detail transaction by payment_id
+      description: _
+      parameters:
+      - name: payment_id
+        in: path
+        description: Payment ID
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "200":
+          $ref: "#/components/responses/Response200ReservationDetails"
+        "400":
+          $ref: "#/components/responses/Response400"
+        "404":
+          $ref: "#/components/responses/Response404"
+        "500":
+          $ref: "#/components/responses/Response500"
+      security:
+      - bearerAuth: []
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  requestBodies:
+    RequestLogincustomer:
+      required: true
+      content:
+        multipart/form-data:
+          schema:
+            $ref: "#/components/schemas/customers"
+
+  responses:
+    Response200:
+      description: Successful operation
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                example: 200
+              message:
+                type: string
+                example: "Successfully created"
+
+    Response201:
+      description: Successful operation
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                example: 201
+              message:
+                type: string
+                example: "Successfully accepted"
+
+    Response400:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                example: 400
+              message:
+                type: string
+                example: "Bad request"
+
+    Response401:
+      description: Unauthorized access
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                example: 401
+              message:
+                type: string
+                example: "Unauthorized access"
+
+    Response404:
+      description: Data Not Found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                example: 404
+              message:
+                type: string
+                example: "Data Not Found"
+
+    Response500:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                example: 500
+              message:
+                type: string
+                example: "Internal server error"
+
+    Response200Login:
+      description: Successful login
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+              message:
+                type: string
+              token:
+                type: string
+            example:
+              code: 200
+              message: "Successful login"
+              data:
+                token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InBldGVyemFsYWlAZ21haWwuY29tIiwicGFzc3dvcmQiOiJAU2VjcmV0MTIzIn0.BZq48TAx5wci2LH48KW5geslrGR2ybr0-5Wol-HyDkI"
+
+    Response400Login:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                example: 400
+              message:
+                type: string
+                example: "Bad request, Incorrect email or password"
+
+    Response200Listproducts:
+      description: Get list of events with pagination
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                example: 200
+              message:
+                type: string
+                example: "Successful Operation"
+              data:
+                type: array
+                items:
+                  $ref: "#/components/schemas/products"
+          example:
+            code: 200
+            message: "Successful Operation"
+            data:
+            - product_id: "string-uuid"
+              category: "basketball"
+              name: "product 1"
+              customername: "customer 1"
+              location: "Jakarta"
+              distance: 1
+              price: 100.50
+              average_rating: 4.55
+              product_picture_url: "https://images.app.goo.gl/t5b981L6oUTU3fE18"
+            - product_id: "string-uuid"
+              category: "football"
+              name: "product 2"
+              customername: "customer 2"
+              location: "Jakarta"
+              distance: 1.3
+              price: 200.75
+              average_rating: 4.75
+              product_picture_url: "https://images.app.goo.gl/t5b981L6oUTU3fE18"
+            pagination:
+              limit: 5
+              offset: 0
+              page: 1
+              total_rows: 15
+              total_pages: 3
+
+    Response200customerproducts:
+      description: Get list of events with pagination
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                example: 200
+              message:
+                type: string
+                example: "Successful Operation"
+              data:
+                type: array
+                items:
+                  $ref: "#/components/schemas/products"
+          example:
+            code: 200
+            message: "Successful Operation"
+            data:
+            - product_id: "string-uuid"
+              category: "basketball"
+              name: "product 1"
+              customername: "customer 1"
+              location: "Jakarta"
+              distance: 1
+              price: 100.50
+              average_rating: 4.55
+              product_picture_url: "https://images.app.goo.gl/t5b981L6oUTU3fE18"
+            - product_id: "string-uuid"
+              category: "football"
+              name: "product 2"
+              customername: "customer 1"
+              location: "Jakarta"
+              distance: 1.3
+              price: 200.75
+              average_rating: 4.75
+              product_picture_url: "https://images.app.goo.gl/t5b981L6oUTU3fE18"
+
+    Response200customerproductsCharts:
+      description: _
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                example: 200
+              message:
+                type: string
+                example: "Successful Operation"
+              data:
+                type: array
+                items:
+                  $ref: "#/components/schemas/products"
+          example:
+            code: 200
+            message: "Successful Operation"
+            data:
+            - product_id: "string-uuid"
+              product_name: product 1"
+              sales_volume: 25
+            - product_id: "string-uuid"
+              product_name: "product 2"
+              sales_volume: 30
+
+    Response200Selectproducts:
+      description: Get specific product
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                example: 200
+              message:
+                type: string
+                example: "Successful Operation"
+              data:
+                type: array
+                items:
+                  $ref: "#/components/schemas/products"
+          example:
+            code: 200
+            message: "Successful Operation"
+            data:
+              product_name: "product_name"
+              category: "basketball"
+              address: "address"
+              booking_date: "2023-04-05"
+              start: "07:00"
+              end: "23:00"
+              payment_code: "Jakarta"
+              payment_type: "Mandiri"
+              status: "success"
+
+    Response200Editproducts:
+      description: Successful operation
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                example: 201
+              message:
+                type: string
+                example: "Successfully updated a product"
+
+    Response200Deactiveproducts:
+      description: Successful operation
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                example: 200
+              message:
+                type: string
+                example: "Successfully deleted a product"
+
+    Response200CheckAvailability:
+      description: Successful Operation
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+              message:
+                type: string
+              data:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    reservation_id:
+                      type: string
+                    category:
+                      type: string
+                    name:
+                      type: string
+                    subtotal:
+                      type: integer
+                    duration:
+                      type: integer
+                    gross_amount:
+                      type: integer
+                    check-in_date:
+                      type: string
+                      format: date-time
+                    check-out_date:
+                      type: string
+                      format: date-time
+          example:
+            code: 200
+            message: "Successful operation"
+            data:
+              product_id: "string-product-id"
+              owner_id: "string-customer-id"
+              category: "basketball"
+              product_name: "lapangan basket"
+              reservations:
+              - reservation_id: "string-reservation-id"
+                customername: "Tono Haha"
+                check-in_date: "Saturday,2023-06-05 08:05"
+                check-out_date: "Saturday,2023-06-06 08:05"
+              - reservation_id: "string-reservation-id"
+                customername: "Trim"
+                check-in_date: "Saturday,2023-06-05 10:05"
+                check-out_date: "Saturday,2023-06-07 10:05"
+              - reservation_id: "string-reservation-id"
+                customername: "Concate"
+                check-in_date: "Saturday,2023-06-07 14:05"
+                check-out_date: "Saturday,2023-08-08 14:05"
+
+    Response200Reservation:
+      description: Successful Operation
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+              message:
+                type: string
+              data:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    reservation_id:
+                      type: string
+                    category:
+                      type: string
+                    name:
+                      type: string
+                    subtotal:
+                      type: integer
+                    duration:
+                      type: integer
+                    gross_amount:
+                      type: integer
+                    check-in_date:
+                      type: string
+                      format: date-time
+                    check-out_date:
+                      type: string
+                      format: date-time
+          example:
+            code: 200
+            message: "Successful operation"
+            data:
+            - reservation_id: "string-uuid"
+              category: "futsal"
+              name: "Arena Futsal Tidar"
+              subtotal: 100
+              duration: 2
+              gross_amount: 200
+              check-in_date: "Saturday,2023-06-05 08:05"
+              check-out_date: "Saturday,2023-08-05 08:05"
+            - reservation_id: "string-uuid"
+              category: "futsal"
+              name: "Arena Futsal Tidar"
+              subtotal: 100
+              duration: 2
+              gross_amount: 200
+              check-in_date: "Saturday,2023-06-05 08:05"
+              check-out_date: "Saturday,2023-08-05 08:05"
+
+    Response200customerReservation:
+      description: Successful operation
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                example: 200
+              message:
+                type: string
+                example: "Successful operation"
+              data:
+                type: array
+                items:
+                  type: object
+            example:
+              code: 200
+              message: "Successful operation"
+              data:
+              - product_name: "tidar basket"
+                location: "Jakarta"
+                check_in_date: "2023/06/05 08:05:00"
+                check_out_date: "2023/08/05 08:05:00"
+                duration: 2
+                price: 100
+                total_price: 200
+                payment_type: "bca"
+                payment_code: VA4nUmber
+                status: "success"
+              - product_name: "tidar basket"
+                location: "Jakarta"
+                check_in_date: "2023/06/05 08:05:00"
+                check_out_date: "2023/08/05 08:05:00"
+                duration: 2
+                price: 100
+                total_price: 200
+                payment_type: "bca"
+                payment_code: VA4nUmber
+                status: "success"
+
+    Response200ReservationDetails:
+      description: Successful operation
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                example: 200
+              message:
+                type: string
+                example: "Successful operation"
+              data:
+                type: array
+                items:
+                  type: object
+            example:
+              code: 200
+              message: "Successful operation"
+              data:
+                product_name: "tidar basket"
+                location: "Jakarta"
+                check_in_date: "2023/06/05 08:05:00"
+                check_out_date: "2023/08/05 08:05:00"
+                duration: 2
+                price: 100
+                total_price: 200
+                payment_type: "bca"
+                payment_code: VA4nUmber
+                status: "success"
+
+    Response201MakeReservation:
+      description: Successful Operation
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+              message:
+                type: string
+              data:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    payment_id:
+                      type: string
+                    reservation_id:
+                      type: string
+                    payment_method:
+                      type: string
+                    payment_type:
+                      type: string
+                    payment_code:
+                      type: string
+
+          example:
+            code: 201
+            message: "Successful operation"
+            data:
+              payment_id: "85ef6565-eb95-4be2-a4c0-a6425b27dae7"
+              reservation_id: "271b7e12-6936-47e3-a1de-c8fdbfee250f"
+              payment_method: "cstore"
+              payment_type: "alfamart"
+              payment_code: "43863390217"
+
+  schemas:
+    customers:
+      type: object
+      properties:
+        customer_id:
+          type: string
+        email:
+          type: string
+          format: email
+        phone:
+          type: string
+        password:
+          type: string
+        fullname:
+          type: string
+        legalname:
+          type: string
+        nik:
+          type: string
+        pob:
+          type: string
+        dob:
+          type: string
+          format: date-time
+        salary:
+          type: integer
+        ocr_picture:
+          type: string
+        liveness_picture:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        deleted_at:
+          type: string
+          format: date-time
+    products:
+      type: object
+      properties:
+        product_id:
+          type: string
+        category:
+          type: string
+          enum:
+          - white goods
+          - motor
+          - mobil
+        sku:
+          type: string
+        name:
+          type: string
+        amount:
+          type: integer
+        stock:
+          type: integer
+        tenor:
+          type: integer
+        bunga:
+          type: integer
+        fee:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        deleted_at:
+          type: string
+          format: date-time
+    transactions:
+      type: object
+      properties:
+        transaction_id:
+          type: string
+        customer_id:
+          type: string
+        product_id:
+          type: string
+        nomor_kontract:
+          type: string
+        otr:
+          type: integer
+        admin_fee:
+          type: integer
+        jumlah_cicilan:
+          type: integer
+        jumlah_bunga:
+          type: integer
+        transaction_date:
+          type: string
+          format: date-time

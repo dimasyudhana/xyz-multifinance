@@ -1,0 +1,20 @@
+CREATE TABLE IF NOT EXISTS `customers` (
+  `customer_id` VARCHAR(45) NOT NULL,
+  `email` VARCHAR(255) NOT NULL,
+  `phone` VARCHAR(15) NOT NULL,
+  `password` TEXT NOT NULL,
+  `fullname` VARCHAR(255) DEFAULT NULL,
+  `legalname` VARCHAR(255) DEFAULT NULL,
+  `nik` VARCHAR(16) DEFAULT NULL,
+  `pob` VARCHAR(255) DEFAULT NULL,
+  `dob` DATE DEFAULT NULL,
+  `salary` DOUBLE DEFAULT NULL,
+  `ocr_picture` VARCHAR(255) DEFAULT NULL,
+  `liveness_picture` VARCHAR(255) DEFAULT NULL,
+  `limit` DOUBLE DEFAULT NULL,
+  `created_at` DATETIME(3) DEFAULT NULL,
+  `updated_at` DATETIME(3) DEFAULT NULL,
+  `deleted_at` DATETIME(3) DEFAULT NULL,
+  PRIMARY KEY (`customer_id`),
+  KEY `idx_customers_deleted_at` (`deleted_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

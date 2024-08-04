@@ -13,23 +13,28 @@ import (
 	_productFactory "github.com/dimasyudhana/xyz-multifinance/features/products/factory"
 	_productAPI "github.com/dimasyudhana/xyz-multifinance/features/products/handler"
 
+	_transactionFactory "github.com/dimasyudhana/xyz-multifinance/features/transactions/factory"
+	_transactionAPI "github.com/dimasyudhana/xyz-multifinance/features/transactions/handler"
+
 	"github.com/dimasyudhana/xyz-multifinance/app/middlewares"
 	"github.com/labstack/echo/v4"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 type appsFactory struct {
-	authHandler     *_authAPI.AuthHandler
-	customerHandler *_customerAPI.CustomerHandler
-	productHandler  *_productAPI.ProductHandler
+	authHandler        *_authAPI.AuthHandler
+	customerHandler    *_customerAPI.CustomerHandler
+	productHandler     *_productAPI.ProductHandler
+	transactionHandler *_transactionAPI.TransactionHandler
 }
 
 func InitRouter(db *sql.DB, e *echo.Echo) {
 
 	sysRoute := appsFactory{
-		authHandler:     _authFactory.New(db),
-		customerHandler: _customerFactory.New(db),
-		productHandler:  _productFactory.New(db),
+		authHandler:        _authFactory.New(db),
+		customerHandler:    _customerFactory.New(db),
+		productHandler:     _productFactory.New(db),
+		transactionHandler: _transactionFactory.New(db),
 	}
 
 	e.GET("/health", func(c echo.Context) error {
@@ -43,5 +48,9 @@ func InitRouter(db *sql.DB, e *echo.Echo) {
 	e.GET("/products", sysRoute.productHandler.Get())
 	e.GET("/products/:product_id", sysRoute.productHandler.GetById())
 	e.GET("/products/availability", sysRoute.productHandler.CheckAvailabitity())
+
+	e.POST("/transactions", sysRoute.transactionHandler.Create())
+	e.GET("/transactions/status", sysRoute.transactionHandler.CheckStatus())
+	e.GET("/transactions/:transaction_id", sysRoute.transactionHandler.GetById())
 
 }

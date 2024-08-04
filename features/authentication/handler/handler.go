@@ -16,6 +16,28 @@ func New(service authentication.AuthServiceInterface) *AuthHandler {
 	}
 }
 
+func (handler *AuthHandler) Register() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		authInput := new(registerRequest)
+		errBind := c.Bind(&authInput)
+		if errBind != nil {
+			jsonResponse, httpCode := response.WebResponseError(errBind, response.FEAT_AUTH_CODE)
+			return c.JSON(httpCode, jsonResponse)
+		}
+
+		registeredId, err := handler.authService.Register(register(*authInput))
+		if err != nil {
+			jsonResponse, httpCode := response.WebResponseError(err, response.FEAT_AUTH_CODE)
+			return c.JSON(httpCode, jsonResponse)
+		}
+
+		mapResponse, httpCode := response.WebResponseSuccess("[success] registered", response.FEAT_AUTH_CODE, map[string]any{
+			"customer_id": registeredId,
+		})
+		return c.JSON(httpCode, mapResponse)
+	}
+}
+
 func (handler *AuthHandler) Login() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		authInput := new(loginRequest)

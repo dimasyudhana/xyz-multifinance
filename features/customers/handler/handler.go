@@ -23,13 +23,13 @@ func (ch *CustomerHandler) CustomerTransactions() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		customerId, err := encrypt.ExtractToken(c)
 		if err != nil {
-			jsonResponse, httpCode := response.WebResponseError(errors.New(response.JWT_FailedCastingJwtToken), response.FEAT_USER_CODE)
+			jsonResponse, httpCode := response.WebResponseError(errors.New(response.JWT_FailedCastingJwtToken), response.FEAT_CUSTOMER_CODE)
 			return c.JSON(httpCode, jsonResponse)
 		}
 
 		res, err := ch.srv.CustomerTransactions(customerId)
 		if err != nil {
-			jsonResponse, httpCode := response.WebResponseError(err, response.FEAT_USER_CODE)
+			jsonResponse, httpCode := response.WebResponseError(err, response.FEAT_CUSTOMER_CODE)
 			return c.JSON(httpCode, jsonResponse)
 		}
 
@@ -59,7 +59,7 @@ func (ch *CustomerHandler) CustomerTransactions() echo.HandlerFunc {
 			"transactions": trx,
 		}
 
-		mapResponse, httpCode := response.WebResponseSuccess("[success] create data", response.FEAT_USER_CODE, customerTransactions)
+		mapResponse, httpCode := response.WebResponseSuccess("[success] customer transactions data", response.FEAT_CUSTOMER_CODE, customerTransactions)
 		return c.JSON(httpCode, mapResponse)
 	}
 }

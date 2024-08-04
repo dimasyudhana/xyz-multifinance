@@ -17,14 +17,28 @@ func New(productData products.Data) products.Service {
 	}
 }
 
-func (p *productService) Get(data *products.ProductsCode) (*[]products.ProductsCode, error) {
+func (p *productService) Get(keyword string) (<-chan *products.ProductsCore, error) {
+
+	rows, err := p.productData.Get(keyword)
+	if err != nil {
+		return nil, err
+	}
+
+	result := make(chan *products.ProductsCore)
+	go func() {
+		for _, row := range rows {
+			result <- row
+		}
+		close(result)
+	}()
+
+	return result, nil
+}
+
+func (p *productService) GetById(productId string) (*products.ProductsCore, error) {
 	panic("unimplemented")
 }
 
-func (p *productService) GetById(productId string) (*products.ProductsCode, error) {
-	panic("unimplemented")
-}
-
-func (p *productService) CheckAvailabitity(data *products.ProductsCode) (*products.ProductsCode, error) {
+func (p *productService) CheckAvailabitity(data *products.ProductsCore) (*products.ProductsCore, error) {
 	panic("unimplemented")
 }

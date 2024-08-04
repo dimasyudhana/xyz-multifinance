@@ -1,6 +1,8 @@
 package customers
 
-import "time"
+import (
+	"time"
+)
 
 type CustomersCore struct {
 	CustomerId      string     `json:"user_id"`
@@ -19,12 +21,20 @@ type CustomersCore struct {
 	CreatedAt       time.Time  `json:"created_at"`
 	UpdatedAt       time.Time  `json:"updated_at"`
 	DeletedAt       *time.Time `json:"deleted_at"`
+	TransactionId   string     `json:"transaction_id"`
+	NomorKontrak    string     `json:"nomor_kontrak"`
+	NamaAsset       string     `json:"nama_asset"`
+	OTR             string     `json:"otr"`
+	JumlahCicilan   string     `json:"jumlah_cicilan"`
+	JumlahBunga     string     `json:"jumlah_bunga"`
+	AdminFee        string     `json:"admin_fee"`
+	TransactionDate string     `json:"transaction_date"`
 }
 
 type Service interface {
-	Insert(data *CustomersCore) (*CustomersCore, error)
+	CustomerTransactions(customerId string) (<-chan *CustomersCore, error)
 }
 
 type Data interface {
-	Insert(data *CustomersCore) (*CustomersCore, error)
+	CustomerTransactions(customerId string) ([]*CustomersCore, error)
 }

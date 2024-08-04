@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"net/http"
 
+	"github.com/dimasyudhana/xyz-multifinance/app/middlewares"
 	_authFactory "github.com/dimasyudhana/xyz-multifinance/features/authentication/factory"
 	_authAPI "github.com/dimasyudhana/xyz-multifinance/features/authentication/handler"
 
@@ -43,6 +44,8 @@ func InitRouter(db *sql.DB, e *echo.Echo) {
 
 	e.POST("/registrasi", sysRoute.authHandler.Register())
 	e.POST("/login", sysRoute.authHandler.Login())
+
+	e.GET("/customers/transactions", sysRoute.customerHandler.CustomerTransactions(), middlewares.JWTMiddleware())
 
 	e.GET("/products", sysRoute.productHandler.Get())
 	e.GET("/products/:product_id", sysRoute.productHandler.GetById())

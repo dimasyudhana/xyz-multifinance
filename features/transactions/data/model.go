@@ -6,6 +6,7 @@ type Transaction struct {
 	TransactionId   string
 	CustomerId      string
 	NomorKontrak    string
+	NamaAsset       string
 	OTR             float32
 	JumlahCicilan   float32
 	JumlahBunga     float32
